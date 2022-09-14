@@ -99,7 +99,20 @@ let
       # pkgs.lutris
       # https://github.com/Plagman/gamescope
       pkgs.gamescope
+
+      vim
+
+      fuse-overlayfs # required by podman systemd scripts
+      btrfs-progs
+      kexec-tools
+
+      file
+      tree
     ];
+    programs = {
+      tmux.enable = true;
+      htop.enable = true;
+    };
 
     ## 64 and 32 bit Vulkan support
     hardware.opengl.driSupport = true;
@@ -243,12 +256,14 @@ let
         touch /etc/NIXOS
         ${config.nix.package}/bin/nix-env -p /nix/var/nix/profiles/system --set /run/current-system
       '';
+
+    virtualisation.podman.enable = true;
   };
 };
 
 mkNetboot = nixpkgs.pkgs.symlinkJoin {
   name = "netboot";
-  paths = with nixosWNetBoot.config.system.build; [ netbootRamdisk kernel netbootIpxeScript ];
+  paths = with nixosWNetBoot.config.system.build; [ netbootRamdisk kernel netbootIpxeScript kexecTree ];
   preferLocalBuild = true;
 };
 
